@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include ("./headerscript.html") -%>
+</head>
+<body>
+<%- include ("./header.html") -%>
+<div style="margin-left: 15%; margin-top: 3%;width: 80%;" class="card">
+    <div class="card-body">
+        <form>
+            <div class="position-relative form-group">
+                <label for="appname" class="">Application name</label>
+                <input id="appname" placeholder="example : myapp" type="text" class="form-control">
+            </div>
+            <div class="position-relative form-group">
+                <label for="description" class="">Description</label>
+                <textarea  style="height: 100px;" id="description" placeholder="description of the Application" type="text" class="form-control"></textarea>
+            </div>
+            <div class="position-relative form-group">
+                <button class="mt-2 btn btn-primary">Register my Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="../architect-ui/assets/scripts/main.js"></script></body>
+</html>

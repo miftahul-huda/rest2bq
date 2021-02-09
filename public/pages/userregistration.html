@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<%- include ("./headerscript.html") -%>
+</head>
+<body>
+<%- include ("./header.html") -%>
+
+    <div class="card-body">
+        <form>
+            <div class="form-group">
+                <label>Full name</label>
+                <input id='fullname' type="text" class="form-control" placeholder="Enter full name...">
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="male" name="gender">
+                  <label class="form-check-label">Male</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="female" name="gender">
+                  <label class="form-check-label">Female</label>
+                </div>
+            </div>
+            <div class="position-relative form-group" style="display: flex;">
+                <div class="form-group" style="width: 40%;">
+                    <label>Country</label>
+                    <select id="cmb-countries" class="form-control select2" style="width: 100%;">
+                      <option selected="selected">Alabama</option>
+                      <option>Alaska</option>
+                      <option>California</option>
+                      <option>Delaware</option>
+                      <option>Tennessee</option>
+                      <option>Texas</option>
+                      <option>Washington</option>
+                    </select>
+                </div>
+                <div style="width: 10%;"></div>
+                <div class="form-group" style="width: 40%;">
+                    <label>City</label>
+                    <select id="cmb-cities" class="form-control select2" style="width: 100%;">
+                    </select>
+                </div>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                </div>
+                <input id="email" type="email" class="form-control" placeholder="Email">
+              </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input id='password' type="password" class="form-control" placeholder="Enter password ...">
+            </div>
+            <div class="form-group">
+                <label>Retype Password</label>
+                <input id='retype-password' type="password" class="form-control" placeholder="Retype password ...">
+            </div>
+            <div class="position-relative form-group">
+                <button id="btn-register" type="button" class="btn btn-block btn-primary">Register</button>
+            </div>
+        </form>
+    </div>
+
+<%- include ("./footer.html") -%>
+</body>
+
+<script>
+
+$(document).ready(function() {
+
+    $("#cmb-countries").on("change", function(){
+        var value = $("#cmb-countries").val();
+
+        $.get(API_HOST + "/city/" + value, function(res){
+            let cities = res.payload;
+      
+            $("#cmb-cities").html("");
+            cities.map(function(item){
+                $("#cmb-cities").append("<option value='" + item.id + "'>" + item.city + "</option>")
+            });
+         });       
+    });
+    $.get(API_HOST + "/country", function(res){
+        let countries = res.payload;
+        $("#cmb-countries").html("");
+        countries.map(function(item){
+            $("#cmb-countries").append("<option value='" + item.countryiso3 + "'>" + item.country + "</option>")
+        });
+    });
+
+    $("#btn-register").on("click",function(){
+        var user = {};
+        user.fullname = $("#fullname").val();
+        user.gender = $("input[name='gender']:checked").val();
+        user.cityId = $("#cmb-cities").val();
+        user.email = $("#email").val();
+        user.password = $("#password").val();
+
+        $.post(API_HOST + "/user/register", JSON.stringify(user), function(res){
+            if(res.success)
+            {
+                alert("Saved")
+                $("#fullname").val("");
+                $("#email").val("");
+                $("#password").val("");
+                $("input[name='gender']:checked").prop("checked", false);
+            }
+        });
+    });
+
+
+});
+</script>
+
+</html>
