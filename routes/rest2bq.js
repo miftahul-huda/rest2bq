@@ -12,6 +12,7 @@ router.post('/run/:dataset/:table', function (req, res){
 
   let url = body.url;
   let urlupdate = body.urlupdate;
+  let pkey = body.pkey;
 
   let dataset = req.params.dataset;
   let table = req.params.table;
@@ -23,13 +24,14 @@ router.post('/run/:dataset/:table', function (req, res){
   axios.get(url)
   .then(response => {
     data = response.data.payload;
-    var sIds = getIds(data);
+    var sIds = getIds(data, pkey);
     data = change(data);
     
 
     if(data.length > 0)
     {
       saveToBigQuery(data, dataset, table).then(function(result){
+
         updateIds(sIds, urlupdate).then(function(response){
           res.send({ payload: data.length, success: true })
         }).catch(err => {
@@ -55,14 +57,11 @@ router.post('/run/:dataset/:table', function (req, res){
 
 async function updateIds(sIds, url)
 {
-  console.log("updateIds")
-  console.log(url);
-  var newurl = url.replace("[ids]", sIds)
-  console.log("updateIds")
-  console.log(newurl);
+  console.log("Updating " + url);
+  console.log(sIds)
 
   var promise = new Promise((resolve, reject) => {
-    axios.get(newurl).then(function(response){
+    axios.post(url, { ids: sIds  }).then(function(response){
       resolve(response)
     }).catch(err => {
       console.log(err);
@@ -85,12 +84,12 @@ function change(data)
   return data;
 }
 
-function getIds(data)
+function getIds(data, pkey)
 {
   var sIds = '';
   for(var i = 0; i < data.length; i++)
   {
-    sIds += data[i].id + ','
+    sIds += data[i][pkey] + ','
   }
 
   if(sIds.length > 0)
@@ -101,19 +100,23 @@ function getIds(data)
 
 async function saveToBigQuery(data, dataset, table)
 {
-  let jsonData = require('../config.json');
-  const options = {
-    keyFilename: jsonData.GCP_CREDENTIAL,
-    projectId: jsonData.GCP_PROJECT,
-  };
+  var options = {};
 
+  if(process.env.ENVIRONMENT != "production")
+  {
+    let jsonData = require('../config.json');
+    options = {
+      keyFilename: jsonData.GCP_CREDENTIAL,
+      projectId: jsonData.GCP_PROJECT,
+    };
+  }
   console.log(options)
 
   // Create a client
   const bigqueryClient = new BigQuery(options);
 
   console.log("==========DATA=======")
-  console.log(data)
+  //console.log(data)
 
   // Insert data into a table
   await bigqueryClient
@@ -121,7 +124,7 @@ async function saveToBigQuery(data, dataset, table)
     .table(table)
     .insert(data);
   console.log(`Inserted ${data.length} rows`);
-
+  
   return 
 }
 

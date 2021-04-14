@@ -1,4 +1,4 @@
 {
-    "GCP_PROJECT" : "telkomsel-poc-267808",
-    "GCP_CREDENTIAL" : "/Users/miftahul.huda/Credentials/telkomsel-poc-retailintelligence.json"
+    "GCP_PROJECT" : "telkomsel-retail-intelligence",
+    "GCP_CREDENTIAL" : "/Users/miftahul.huda/Credentials/telkomsel-retail-intelligence-rest2bq.json"
 }

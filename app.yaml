@@ -1,0 +1,6 @@
+service: res2bq
+runtime: nodejs12
+env: standard
+env_variables:
+  FUCKING_PORT: 8080
+  ENVIRONMENT: "production"

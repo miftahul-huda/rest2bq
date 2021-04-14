@@ -62,5 +62,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3006)
+console.log(process.env.ENVIRONMENT)
+console.log("Listening to port " + process.env.FUCKING_PORT)
+app.listen(process.env.FUCKING_PORT)
+
 module.exports = app;
